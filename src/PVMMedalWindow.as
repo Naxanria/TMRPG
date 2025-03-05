@@ -323,7 +323,17 @@ namespace PVM
             UI::TableNextColumn();
             UI::Text("");
         }
+
+        UI::SameLine();
+        UI::TextDisabled(Icons::Clipboard);
+        if (UI::IsItemClicked())
+        {
+            string pbString = Utils::FormatForSheet(personalBest); 
+            IO::SetClipboard(pbString);
+            UI::ShowNotification(Icons::Clipboard + " Personal best time copied to clipboard " + pbString);
+        }
     }
+
 
     bool ShowPvmMedal(int medalID)
     {
