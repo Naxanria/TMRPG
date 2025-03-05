@@ -289,7 +289,7 @@ void Render()
     bool tableEnd = false;
     if (showHeader)
     {
-        tableEnd = UI::BeginTable("header", 1, UI::TableFlags::SizingFixedFit);
+        tableEnd = UI::BeginTable("pvm_header", 1, UI::TableFlags::SizingFixedFit);
 
         if (setting_show_mapname != AuthorVisibility::HIDDEN)
         {
@@ -337,7 +337,7 @@ void Render()
         columns++;
     }
 
-    tableEnd = UI::BeginTable("medals", columns, UI::TableFlags::SizingFixedFit);
+    tableEnd = UI::BeginTable("pvm_medals", columns, UI::TableFlags::SizingFixedFit);
     bool shownPB = false;
 
     for (int i = ALIEN; i >= NOOB; i--)
