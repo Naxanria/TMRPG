@@ -344,7 +344,7 @@ void Render()
     {
         int medalTime = GetMedalTime(i);
 
-        if (medalTime == 0)
+        if (medalTime <= 0)
         {
             // no such medal time so we can skip it
             continue;
