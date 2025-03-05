@@ -62,19 +62,14 @@ namespace PVM
     string currentAuthor = "";
     bool fetching = false;
 
-    const string pbColor = "\\$0FF";
-
-    const string authorColor = "\\$AAA";
-    const string gradeColor = "\\$36B";
-
     const array<string> medals = 
     {
-        "\\$444" + Icons::Circle, // nothing
-        "\\$c63" + Icons::Circle, // Noob
-        "\\$488" + Icons::Circle, // Intermediate
-        "\\$136" + Icons::Circle, /// Challenger
-        "\\$BBB" + Icons::Circle, // Player
-        "\\$EC3" + Icons::Circle  // Alien
+        Colours::MEDAL_UNKNOWN + Icons::Circle, // nothing
+        Colours::MEDAL_NOOB + Icons::Circle, // Noob
+        Colours::MEDAL_INTERMEDIATE + Icons::Circle, // Intermediate
+        Colours::MEDAL_CHALLENGER + Icons::Circle, /// Challenger
+        Colours::MEDAL_PLAYER + Icons::Circle, // Player
+        Colours::MEDAL_ALIEN + Icons::Circle  // Alien
     };
 
     const array<string> labels = 
@@ -191,7 +186,7 @@ namespace PVM
 
 
                 string authorName = setting_show_author == AuthorVisibility::SHOW_PVM_NAME ? currentMapData.author : currentAuthor;
-                UI::Text(authorColor + authorName);
+                UI::Text(Colours::FORMAT_AUTHOR_COLOUR + authorName);
             }
 
             if (setting_show_pvm_grade)
@@ -200,7 +195,7 @@ namespace PVM
                 UI::TableNextColumn();
 
                 // todo: add per grade colours
-                UI::Text(gradeColor + "Grade: " + currentMapData.pvm_grade);
+                UI::Text(Colours::FORMAT_GRADE_COLOUR + "Grade: " + currentMapData.pvm_grade);
             }
 
             if (tableEnd)
@@ -271,11 +266,11 @@ namespace PVM
                         int delta = personalBest - medalTime;
                         if (delta < 0)
                         {
-                            UI::Text("\\$77f-" + ReadableTime(delta * -1));
+                            UI::Text(Colours::TIME_DELTA_AHEAD + ReadableTime(delta * -1));
                         }
                         else
                         {
-                            UI::Text("\\$f77+" + ReadableTime(delta));
+                            UI::Text(Colours::TIME_DELTA_BEHIND + ReadableTime(delta));
                         }
                     }
                 }
@@ -312,11 +307,11 @@ namespace PVM
         if (setting_show_labels)
         {
             UI::TableNextColumn();
-            UI::Text(pbColor + "PB");
+            UI::Text(Colours::TIME_PERSONAL_BEST + "PB");
         }
 
         UI::TableNextColumn();
-        UI::Text(pbColor + ReadableTime(pb));
+        UI::Text(Colours::TIME_PERSONAL_BEST + ReadableTime(pb));
 
         if (setting_show_pvm_delta)
         {
