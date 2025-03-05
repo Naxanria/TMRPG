@@ -22,6 +22,9 @@ namespace PVM
     [Setting name="Show Grade" category="PVM"]
     bool setting_show_pvm_grade = true;
 
+
+    [Setting name="No Way time" category="PVM"]
+    bool setting_show_pvm_no_way = true;
     [Setting name="Alien time" category="PVM"]
     bool setting_show_pvm_alien = true;
     [Setting name="Player time" category="PVM"]
@@ -49,6 +52,7 @@ namespace PVM
     const int Challenger = 3;
     const int PLAYER = 4;
     const int ALIEN = 5;
+    const int NO_WAY = 6;
 
     Json::Value pvmJson;
 
@@ -69,7 +73,8 @@ namespace PVM
         Colours::MEDAL_INTERMEDIATE + Icons::Circle, // Intermediate
         Colours::MEDAL_CHALLENGER + Icons::Circle, /// Challenger
         Colours::MEDAL_PLAYER + Icons::Circle, // Player
-        Colours::MEDAL_ALIEN + Icons::Circle  // Alien
+        Colours::MEDAL_ALIEN + Icons::Circle,  // Alien
+        Colours::MEDAL_NO_WAY + Icons::Trophy // No Way 
     };
 
     const array<string> labels = 
@@ -79,7 +84,8 @@ namespace PVM
         "Intermediate",
         "Challenger",
         "Player",
-        "Alien"
+        "Alien",
+        "No Way"
     };
 
 
@@ -219,7 +225,7 @@ namespace PVM
         tableEnd = UI::BeginTable("pvm_medals", columns, UI::TableFlags::SizingFixedFit);
         bool shownPB = false;
 
-        for (int i = ALIEN; i >= NOOB; i--)
+        for (int i = NO_WAY; i >= NOOB; i--)
         {
             int medalTime = GetMedalTime(i);
 
@@ -348,6 +354,10 @@ namespace PVM
 
             case 5:
                 return setting_show_pvm_alien;
+
+            case 6:
+                return setting_show_pvm_no_way;
+
         }
 
         // just show w/e nonsense was requested
@@ -372,6 +382,9 @@ namespace PVM
 
             case 5:
                 return currentMapData.pvm_aliens;
+                
+            case 6 :
+                return currentMapData.pvm_no_way;
         }
 
         return 0;
