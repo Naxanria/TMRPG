@@ -1,4 +1,4 @@
-
+bool awaitingReload = false;
 
 void Main()
 {
@@ -8,7 +8,7 @@ void Main()
     if (!PVM::LoadPvmJson())
     {
         // todo: have fallback local data?    
-
+        PVMLOADERROR();
     }
 
     while (true)
@@ -46,18 +46,59 @@ void Main()
             }
         }
 
+        if (awaitingReload)
+        {
+            if (!PVM::ReloadPvm())
+            {
+                PVMLOADERROR();
+            }
+            awaitingReload = false;
+        }
+
         yield(100); // wait ~1s per loop
     }
 }
 
+string CheckIcon(bool test)
+{
+    if (test)
+    {
+        return "\\$0e0" + Icons::Check + "\\$z";
+    }
+
+    return "\\$e00" + Icons::Times + "\\$z";
+}
 
 void RenderMenu()
 {
-    string icon = (PVM::setting_show_pvm) ? Icons::Check : Icons::Times;
-    if (UI::MenuItem("PVM " + icon))
+    if (UI::BeginMenu(Colours::MEDAL_ALIEN + Icons::Circle + "\\$z PVM"))
     {
-        PVM::setting_show_pvm = !PVM::setting_show_pvm;
+        if (UI::MenuItem(Icons::Eye + " Show " + CheckIcon(PVM::setting_show_pvm)))
+        {
+            PVM::setting_show_pvm = !PVM::setting_show_pvm;
+        }
+        else if(UI::MenuItem("\\$0f0" + Icons::Recycle + "\\$z Reload"))
+        {
+            if (!PVM::fetching)
+            {
+                print("Reloading pvm");
+                awaitingReload = true;
+            }
+        } 
+        UI::EndMenu();       
     }
+
+
+    // string icon = (PVM::setting_show_pvm) ? Icons::Check : Icons::Times;
+    // if (UI::MenuItem("PVM " + icon))
+    // {
+    //     PVM::setting_show_pvm = !PVM::setting_show_pvm;
+    // }
+}
+
+void PVMLOADERROR()
+{
+    UI::ShowNotification(Icons::Bullhorn, "Failed to load the pvm data. Please try again later", vec4(0.9, 0, 0, 1));
 }
 
 void Render()

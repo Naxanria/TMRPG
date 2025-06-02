@@ -391,11 +391,22 @@ namespace PVM
         return Time::Format(time);
     }
 
+    bool ReloadPvm()
+    {
+        if (fetching)
+        {
+            return true;
+        }
+
+        Reset();
+        return LoadPvmJson();
+    }
+
     bool LoadPvmJson()
     {   
         pvmMaps = dictionary();
 
-        string url = "https://raw.githubusercontent.com/Naxanria/tm_stuff/refs/heads/main/pvm_test.json";
+        string url = "https://raw.githubusercontent.com/Naxanria/tm_stuff/refs/heads/main/pvm.json";
         print("Fetching pvm info from '" + url + "'");
         Net::HttpRequest@ req = Net::HttpRequest();
         req.Url = url;
@@ -404,7 +415,8 @@ namespace PVM
         req.Start();
         while(!req.Finished())
         {
-            yield();
+            sleep(100);
+            //yield();
         }
 
         if (req.ResponseCode() == 204)
