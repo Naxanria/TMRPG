@@ -77,14 +77,21 @@ void RenderMenu()
         {
             PVM::setting_show_pvm = !PVM::setting_show_pvm;
         }
-        else if(UI::MenuItem("\\$0f0" + Icons::Recycle + "\\$z Reload"))
+        
+        if(UI::MenuItem("\\$0f0" + Icons::Recycle + "\\$z Reload"))
         {
             if (!PVM::fetching)
             {
                 print("Reloading pvm");
                 awaitingReload = true;
             }
-        } 
+        }
+
+        if (UI::MenuItem("\\$999" + Icons::Kenney::List + " \\$zOpen pvm sheet"))
+        {
+            OpenBrowserURL("https://docs.google.com/spreadsheets/d/1z1n6LfHMskAzD4N6CTNrnhyjFtgN_54TGlAyoU6eOnk/edit?usp=sharing");
+        }
+
         UI::EndMenu();       
     }
 
