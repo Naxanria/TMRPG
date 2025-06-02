@@ -2,6 +2,11 @@ namespace Utils
 {    
     string FormatForSheet(int time)
     {
+        if (time <= 0)
+        {
+            return "00:00:00.000";
+        }
+
         int min = time / 60000;
         time -= min * 60000;
         
