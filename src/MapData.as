@@ -14,7 +14,7 @@ class MapData
     uint pvm_challenger;
     uint pvm_players;
     uint pvm_aliens;
-    uint pvm_no_way;
+    uint pvm_aliens_plus;
 
     MapData()
     { }
@@ -36,7 +36,7 @@ class MapData
         pvm_players = pvm["player"];
         pvm_aliens = pvm["alien"];
         pvm_grade = pvm["grade"];
-        pvm_no_way = pvm.HasKey("no_way") ? pvm["no_way"] : 0;
+        pvm_aliens_plus = pvm.HasKey("alien_plus") ? pvm["alien_plus"] : 0;
     }
 
     string ToString()

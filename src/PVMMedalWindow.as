@@ -22,9 +22,12 @@ namespace PVM
     [Setting name="Show Grade" category="PVM"]
     bool setting_show_pvm_grade = true;
 
+    //[Setting name="No Way time" category="PVM"]
+    // deprecated and replaced by alien++ time
+    bool setting_show_pvm_no_way = false;
 
-    [Setting name="No Way time" category="PVM"]
-    bool setting_show_pvm_no_way = true;
+    [Setting name="Alien++ time" category="PVM"]
+    bool setting_show_pvm_alien_plus = true;
     [Setting name="Alien time" category="PVM"]
     bool setting_show_pvm_alien = true;
     [Setting name="Player time" category="PVM"]
@@ -52,7 +55,7 @@ namespace PVM
     const int Challenger = 3;
     const int PLAYER = 4;
     const int ALIEN = 5;
-    const int NO_WAY = 6;
+    const int ALIEN_PLUS = 6;
 
     Json::Value pvmJson;
 
@@ -66,29 +69,16 @@ namespace PVM
     string currentAuthor = "";
     bool fetching = false;
 
-    const array<string> medals = 
+    array<Medal> medals = 
     {
-        Colours::MEDAL_UNKNOWN + Icons::Circle, // nothing
-        Colours::MEDAL_NOOB + Icons::Circle, // Noob
-        Colours::MEDAL_INTERMEDIATE + Icons::Circle, // Intermediate
-        Colours::MEDAL_CHALLENGER + Icons::Circle, /// Challenger
-        Colours::MEDAL_PLAYER + Icons::Circle, // Player
-        Colours::MEDAL_ALIEN + Icons::Circle,  // Alien
-        Colours::MEDAL_NO_WAY + Icons::Trophy // No Way 
+        Medal(0, "", Colours::MEDAL_UNKNOWN, Icons::Circle),
+        Medal(NOOB, "Noob", Colours::MEDAL_NOOB, Icons::Circle),
+        Medal(INTERMEDIATE, "Intermediate", Colours::MEDAL_INTERMEDIATE, Icons::Circle),
+        Medal(Challenger, "Challenger", Colours::MEDAL_CHALLENGER, Icons::Circle),
+        Medal(PLAYER, "Player", Colours::MEDAL_PLAYER, Icons::Circle),
+        Medal(ALIEN, "Alien", Colours::MEDAL_ALIEN, Icons::Circle),
+        Medal(ALIEN_PLUS, "Alien++", Colours::MEDAL_ALIEN_PLUS, Icons::Crosshairs)
     };
-
-    const array<string> labels = 
-    {
-        "",
-        "Noob",
-        "Intermediate",
-        "Challenger",
-        "Player",
-        "Alien",
-        "No Way"
-    };
-
-
 
     void Update(string uid, int pb)
     {
@@ -225,9 +215,10 @@ namespace PVM
         tableEnd = UI::BeginTable("pvm_medals", columns, UI::TableFlags::SizingFixedFit);
         bool shownPB = false;
 
-        for (int i = NO_WAY; i >= NOOB; i--)
+        for (int i = ALIEN_PLUS; i >= NOOB; i--)
         {
             int medalTime = GetMedalTime(i);
+            Medal medal = medals[i];
 
             if (medalTime <= 0)
             {
@@ -249,12 +240,12 @@ namespace PVM
                 UI::TableNextRow();
 
                 UI::TableNextColumn();
-                UI::Text(medals[i]);
+                UI::Text(medal.GetIcon());
                 
                 if (setting_show_labels)
                 {
                     UI::TableNextColumn();
-                    UI::Text(labels[i]);
+                    UI::Text(medal.GetLabel());
                 }
 
                 UI::TableNextColumn();
@@ -308,7 +299,7 @@ namespace PVM
         UI::TableNextRow();
 
         UI::TableNextColumn();
-        UI::Text(medals[medalID]);
+        UI::Text(medals[medalID].GetIcon());
         
         if (setting_show_labels)
         {
@@ -356,7 +347,7 @@ namespace PVM
                 return setting_show_pvm_alien;
 
             case 6:
-                return setting_show_pvm_no_way;
+                return setting_show_pvm_alien_plus;
 
         }
 
@@ -384,7 +375,7 @@ namespace PVM
                 return currentMapData.pvm_aliens;
                 
             case 6 :
-                return currentMapData.pvm_no_way;
+                return currentMapData.pvm_aliens_plus;
         }
 
         return 0;
@@ -404,7 +395,7 @@ namespace PVM
     {   
         pvmMaps = dictionary();
 
-        string url = "https://raw.githubusercontent.com/Naxanria/tm_stuff/refs/heads/main/pvm.json";
+        string url = "https://raw.githubusercontent.com/Naxanria/tm_stuff/refs/heads/main/pvm_test.json";
         print("Fetching pvm info from '" + url + "'");
         Net::HttpRequest@ req = Net::HttpRequest();
         req.Url = url;
