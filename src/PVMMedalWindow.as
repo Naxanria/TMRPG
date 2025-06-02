@@ -415,8 +415,7 @@ namespace PVM
         req.Start();
         while(!req.Finished())
         {
-            sleep(100);
-            //yield();
+            yield();
         }
 
         if (req.ResponseCode() == 204)
