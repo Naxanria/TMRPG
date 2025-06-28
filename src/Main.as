@@ -55,7 +55,7 @@ void Main()
             awaitingReload = false;
         }
 
-        yield(100); // wait ~1s per loop
+        yield();
     }
 }
 
@@ -77,6 +77,11 @@ void RenderMenu()
         {
             PVM::setting_show_pvm = !PVM::setting_show_pvm;
         }
+
+        if (UI::MenuItem(Icons::ListAlt + " Show List"))
+        {
+            PVM::Overview::showOverview = true;
+        }
         
         if(UI::MenuItem("\\$0f0" + Icons::Recycle + "\\$z Reload"))
         {
@@ -94,13 +99,11 @@ void RenderMenu()
 
         UI::EndMenu();       
     }
+}
 
-
-    // string icon = (PVM::setting_show_pvm) ? Icons::Check : Icons::Times;
-    // if (UI::MenuItem("PVM " + icon))
-    // {
-    //     PVM::setting_show_pvm = !PVM::setting_show_pvm;
-    // }
+void DebugLoadPb()
+{
+     PVM::pvmMapList[0].LoadPb();
 }
 
 void PVMLOADERROR()
@@ -113,6 +116,11 @@ void Render()
     if (PVM::setting_show_pvm)
     {
         PVM::Render();
+    }
+
+    if (PVM::Overview::showOverview)
+    {
+        PVM::Overview::Render();
     }
 }
 

@@ -62,6 +62,7 @@ namespace PVM
     //CGameCtnChallenge currentMap;
     MapData currentMapData = MapData();
     dictionary pvmMaps = {};
+    MapData@[] pvmMapList;
 
     string currentMapUID = "";
     int personalBest = -1;
@@ -96,6 +97,8 @@ namespace PVM
             PersonalBestChange(pb);
         }
         personalBest = pb;
+        currentMapData.pb = pb;
+        UpdatePB(pb, uid);
     }
 
     void MapChange(string newUid)
@@ -105,9 +108,26 @@ namespace PVM
 
     void PersonalBestChange(int newPb)
     {
-        // todo: implement
+        //UpdatePB(newPb, currentMapUID);
     }
 
+    void UpdatePB(int time, string uid)
+    {
+        if (!pvmMaps.Exists(uid))
+        {
+            return;
+        }
+
+        int tmxId = cast<MapData>(pvmMaps[uid]).tmxId;
+        for (int i = 0; i < pvmMapList.Length; i++)
+        {
+            if (pvmMapList[i].tmxId == tmxId)
+            {
+                pvmMapList[i].pb = time;
+                pvmMaps[currentMapData.uid] = pvmMapList[i];
+            }
+        }
+    }
 
     void Reset()
     {
@@ -139,7 +159,7 @@ namespace PVM
             return;
         }
 
-        int winFlags = UI::WindowFlags::NoDocking | UI::WindowFlags::AlwaysAutoResize | UI::WindowFlags::NoTitleBar | UI::WindowFlags::NoDocking;
+        int winFlags = UI::WindowFlags::NoDocking | UI::WindowFlags::AlwaysAutoResize | UI::WindowFlags::NoTitleBar;
 
         if(setting_lock_position) 
         {
@@ -357,28 +377,29 @@ namespace PVM
 
     uint GetMedalTime(int medalID)
     {
-        switch (medalID)
-        {
-            case 1:
-                return currentMapData.pvm_noob;
+        return currentMapData.GetMedalTime(medalID);
+        // switch (medalID)
+        // {
+        //     case 1:
+        //         return currentMapData.pvm_noob;
 
-            case 2:
-                return currentMapData.pvm_intermediate;
+        //     case 2:
+        //         return currentMapData.pvm_intermediate;
 
-            case 3:
-                return currentMapData.pvm_challenger;
+        //     case 3:
+        //         return currentMapData.pvm_challenger;
 
-            case 4:
-                return currentMapData.pvm_players;
+        //     case 4:
+        //         return currentMapData.pvm_players;
 
-            case 5:
-                return currentMapData.pvm_aliens;
+        //     case 5:
+        //         return currentMapData.pvm_aliens;
                 
-            case 6 :
-                return currentMapData.pvm_aliens_plus;
-        }
+        //     case 6 :
+        //         return currentMapData.pvm_aliens_plus;
+        // }
 
-        return 0;
+        // return 0;
     }
 
     string ReadableTime(int time)
@@ -405,6 +426,7 @@ namespace PVM
     bool LoadPvmJson()
     {   
         pvmMaps = dictionary();
+        pvmMapList.RemoveRange(0, pvmMapList.Length);
 
         string url = "https://raw.githubusercontent.com/Naxanria/tm_stuff/refs/heads/main/pvm.json";
         print("Fetching pvm info from '" + url + "'");
@@ -437,13 +459,15 @@ namespace PVM
         for (int i = 0; i < pvmJson.Length; i++)
         {
             Json::Value mapInfo = pvmJson[i];
-            MapData mapData = MapData(mapInfo);
-
+            MapData@ mapData = MapData(mapInfo);
             // print(mapData.ToString());
 
             pvmMaps[mapData.uid] = mapData;
+            pvmMapList.InsertLast(@mapData);
         } 
         fetching = false;
+
+        Overview::initialized = false;
 
         print("Found " + pvmJson.Length + " pvm maps");
 
