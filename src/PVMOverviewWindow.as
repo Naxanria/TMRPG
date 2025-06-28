@@ -164,13 +164,13 @@ namespace PVM
                 UI::BeginChild("pvm maps");
                 UI::BeginGroup();
                 // name, author, current medal, Play, TMX
-                if (UI::BeginTable("pvm overview", 7, UI::TableFlags::SizingFixedFit))
+                if (UI::BeginTable("pvm overview", 6, UI::TableFlags::SizingFixedFit))
                 {
                     UI::TableSetupColumn("name", UI::TableColumnFlags::WidthFixed, nameWidth);
                     UI::TableSetupColumn("author", UI::TableColumnFlags::WidthStretch);
                     UI::TableSetupColumn("grade", UI::TableColumnFlags::WidthFixed, gradeWidth);
-                    UI::TableSetupColumn("medal", UI::TableColumnFlags::WidthFixed, medalWidth);
-                    UI::TableSetupColumn("time", UI::TableColumnFlags::WidthFixed, timeWidth);
+                    UI::TableSetupColumn("medal", UI::TableColumnFlags::WidthFixed, medalWidth + timeWidth + 1);
+                    //UI::TableSetupColumn("time", UI::TableColumnFlags::WidthFixed, timeWidth);
                     UI::TableSetupColumn("playBtn");
                     UI::TableSetupColumn("tmxBtn");
 
@@ -213,20 +213,14 @@ namespace PVM
             UI::TableNextColumn();
             UI::Text(mapData.pvm_grade);
 
-            UI::TableNextColumn();
-            UI::Text(GetMedalToShow(mapData));
-            if (UI::IsItemClicked())
-            {
-                Utils::TimeToClipboard(mapData.pb);
-            }
-
-            UI::TableNextColumn();
+            UI::TableNextColumn();            
             string timeText = mapData.pb == -1 ? "\\$666no pb\\$z" : PVM::ReadableTime(mapData.pb);
-            UI::Text(timeText);
+            UI::Text(GetMedalToShow(mapData) + " \\$z" + timeText);
             if (UI::IsItemClicked())
             {
                 Utils::TimeToClipboard(mapData.pb);
             }
+            AddTimeTooltip(mapData);
 
             UI::TableNextColumn();
             if (UI::Button("Play"))
@@ -245,6 +239,31 @@ namespace PVM
                 OpenBrowserURL("https://trackmania.exchange/mapshow/" + mapData.tmxId);
             }
             UI::PopID();
+        }
+
+        void AddTimeTooltip(MapData& map)
+        {
+            if (!UI::IsItemHovered())
+            {
+                return;
+            }
+
+            UI::BeginTooltip();
+            
+            for (int i = PVM::ALIEN_PLUS; i >= PVM::NOOB; i--)
+            {
+                uint time = map.GetMedalTime(i);
+                if (time == 0)
+                {
+                    continue;
+                }
+
+                UI::Text(medals[i].GetIcon());
+                UI::SameLine();
+
+                UI::Text(PVM::ReadableTime(time));
+            }
+            UI::EndTooltip();
         }
 
         string GetMedalToShow(MapData map)
