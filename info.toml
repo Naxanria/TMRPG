@@ -2,7 +2,7 @@
 name = "TM RPG"
 author = "Naxanria"
 category = "RPG"
-version = "0.4"
+version = "0.5"
 
 [script]
 dependencies = ["NadeoServices"]
