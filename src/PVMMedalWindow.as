@@ -50,6 +50,7 @@ namespace PVM
     vec2 anchor = vec2(200, 200);
 
     // magic numbers
+    const int NO_MEDAL = 0;
     const int NOOB = 1;
     const int INTERMEDIATE = 2;
     const int Challenger = 3;
@@ -72,7 +73,7 @@ namespace PVM
 
     array<Medal> medals = 
     {
-        Medal(0, "", Colours::MEDAL_UNKNOWN, Icons::Circle),
+        Medal(NO_MEDAL, "", Colours::MEDAL_UNKNOWN, Icons::Circle),
         Medal(NOOB, "Noob", Colours::MEDAL_NOOB, Icons::Circle),
         Medal(INTERMEDIATE, "Intermediate", Colours::MEDAL_INTERMEDIATE, Icons::Circle),
         Medal(Challenger, "Challenger", Colours::MEDAL_CHALLENGER, Icons::Circle),
@@ -472,6 +473,24 @@ namespace PVM
         print("Found " + pvmJson.Length + " pvm maps");
 
         return true;
+    }
+
+    int GetBestMedalOnMap(MapData& map)
+    {
+        if (map.pb == -1) // no pb
+        {
+            return -1;
+        }
+
+        for (int i = ALIEN_PLUS; i >= NOOB; i--)
+        {
+            if (map.pb <= map.GetMedalTime(i))
+            {
+                return i;
+            }
+        }
+
+        return 0; // no medal
     }
 
     bool CheckCurrentMap()

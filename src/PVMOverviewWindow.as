@@ -2,6 +2,111 @@ namespace PVM
 {
     namespace Overview
     {
+        Medal noPbMedal = Medal(-1, "no pb", "\\$888", Icons::Kenney::Radio);
+
+        namespace Stats
+        {
+            int totalMaps = 0;
+            
+            int totalUnfinished = 0;
+            
+            int totalFinished = 0;
+            int totalNoob = 0;
+            int totalIntermediate = 0;
+            int totalChallenger = 0;
+            int totalPlayer = 0;
+            int totalAlien = 0;
+            int totalAlienPlus = 0;
+
+            void Update()
+            {
+                totalMaps = PVM::pvmMapList.Length;
+                for (int i = 0; i < totalMaps; i++)
+                {
+                    MapData map = PVM::pvmMapList[i];
+                    int medal = PVM::GetBestMedalOnMap(map);
+                    if (medal == -1)
+                    {
+                        totalUnfinished++;
+                        continue;
+                    }
+
+                    totalFinished++;
+                    if (medal >= PVM::NOOB)
+                    {
+                        totalNoob++;
+                    }
+                    if (medal >= PVM::INTERMEDIATE)
+                    {
+                        totalIntermediate++;
+                    }
+                    if (medal >= PVM::Challenger)
+                    {
+                        totalChallenger++;
+                    }
+                    if (medal >= PVM::PLAYER)
+                    {
+                        totalPlayer++;
+                    }
+                    if (medal >= PVM::ALIEN)
+                    {
+                        totalAlien++;
+                    }
+                    if (medal >= PVM::ALIEN_PLUS)
+                    {
+                        totalAlienPlus++;
+                    }
+                }
+            }
+
+            void UpdateSingle(MapData& map)
+            {
+
+            }
+
+            void Reset()
+            {
+                totalMaps = PVM::pvmMapList.Length;
+
+                totalUnfinished = 0;
+                totalFinished = 0;
+                totalNoob = 0;
+                totalIntermediate = 0;
+                totalChallenger = 0;
+                totalPlayer = 0;
+                totalAlien = 0;
+                totalAlienPlus = 0;
+            }
+
+            void RenderStats()
+            {
+                UI::BeginGroup();
+                
+                UI::Text("");
+                _renderStat(totalUnfinished, noPbMedal);
+                _renderStat(totalFinished, PVM::medals[PVM::NO_MEDAL]);
+                _renderStat(totalNoob, PVM::medals[PVM::NOOB]);
+                _renderStat(totalIntermediate, PVM::medals[PVM::INTERMEDIATE]);
+                _renderStat(totalChallenger, PVM::medals[PVM::Challenger]);
+                _renderStat(totalPlayer, PVM::medals[PVM::PLAYER]);
+                _renderStat(totalAlien, PVM::medals[PVM::ALIEN]);
+                _renderStat(totalAlienPlus, PVM::medals[PVM::ALIEN_PLUS]);                
+
+                UI::EndGroup();
+            }
+
+            void _renderStat(int amount, Medal medal)
+            {
+                if (medal is null)
+                {
+                    medal = noPbMedal;
+                }
+
+                UI::SameLine();
+                UI::Text(medal.GetIcon() + "\\$z (" + amount + "/" + totalMaps + ")");                
+            }
+        }
+
         [Setting name="show_overview" hidden]
         bool showOverview = true;
         bool initialized = false;
@@ -50,9 +155,11 @@ namespace PVM
                 if (_done < PVM::pvmMapList.Length)
                 {                    
                     UI::ProgressBar(float(_done) / PVM::pvmMapList.Length, vec2(size.x, 8));
+                    Stats::Reset();
+                    Stats::Update();
                 }
 
-                RenderStats();
+                Stats::RenderStats();
 
                 UI::BeginChild("pvm maps");
                 UI::BeginGroup();
@@ -139,7 +246,7 @@ namespace PVM
             {
                 //print("requesting info for " + map.name);
                 //UpdatePB(map);
-                return "\\$888" + Icons::Kenney::Radio;
+                return noPbMedal.GetIcon();
             }
 
             for (int i = PVM::ALIEN_PLUS; i >= PVM::NOOB; i--)
