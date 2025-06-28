@@ -31,4 +31,11 @@ namespace Utils
 
         return s + n;
     }
+
+    void TimeToClipboard(int time)
+    {
+        string pbString = Utils::FormatForSheet(time); 
+        IO::SetClipboard(pbString);
+        UI::ShowNotification(Icons::Clipboard + " Personal best time copied to clipboard " + pbString);
+    }
 }

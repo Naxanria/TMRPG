@@ -341,9 +341,7 @@ namespace PVM
         UI::TextDisabled(Icons::Clipboard);
         if (UI::IsItemClicked())
         {
-            string pbString = Utils::FormatForSheet(personalBest); 
-            IO::SetClipboard(pbString);
-            UI::ShowNotification(Icons::Clipboard + " Personal best time copied to clipboard " + pbString);
+            Utils::TimeToClipboard(personalBest);
         }
     }
 

@@ -215,10 +215,18 @@ namespace PVM
 
             UI::TableNextColumn();
             UI::Text(GetMedalToShow(mapData));
+            if (UI::IsItemClicked())
+            {
+                Utils::TimeToClipboard(mapData.pb);
+            }
 
             UI::TableNextColumn();
             string timeText = mapData.pb == -1 ? "\\$666no pb\\$z" : PVM::ReadableTime(mapData.pb);
             UI::Text(timeText);
+            if (UI::IsItemClicked())
+            {
+                Utils::TimeToClipboard(mapData.pb);
+            }
 
             UI::TableNextColumn();
             if (UI::Button("Play"))
