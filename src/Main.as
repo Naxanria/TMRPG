@@ -11,6 +11,8 @@ void Main()
         PVMLOADERROR();
     }
 
+    startnew(API::ClearTaskCoroutine);
+
     while (true)
     {
         auto map = app.RootMap;

@@ -58,10 +58,65 @@ namespace API
 
         if (task.HasSucceeded)
         {
-            // todo: clear tasks properly
-            // auto scoreMgr = cast<CGameScoreAndLeaderBoardManagerScript>(owner);
+           tasksToClear.InsertLast(ClearTask(task, owner));
+        }
+    }
+    class ClearTask
+    {
+        CWebServicesTaskResult@ task;
+        CMwNod@ nod;
 
-            // scoreMgr.TaskResult_Release(task.Id);            
+        CGameUserManagerScript@ userMgr { get { return cast<CGameUserManagerScript>(nod); } }
+        CGameScoreAndLeaderBoardManagerScript@ scoreMgr { get { return cast<CGameScoreAndLeaderBoardManagerScript>(nod); } }
+        CGameDataFileManagerScript@ dataFileMgr { get { return cast<CGameDataFileManagerScript>(nod); } }
+
+        ClearTask(CWebServicesTaskResult@ task, CMwNod@ nod)
+        {
+            @this.task = task;
+            @this.nod = nod;
+        }
+
+        void Release()
+        {
+            if (userMgr !is null) 
+            {
+                userMgr.TaskResult_Release(task.Id);
+            }
+            else if (scoreMgr !is null)
+            {
+                scoreMgr.TaskResult_Release(task.Id);
+            }
+            else if (dataFileMgr !is null)
+            {
+                dataFileMgr.TaskResult_Release(task.Id);
+            }
+            else
+            {
+                throw("Unknown task type! " + Reflection::TypeOf(nod).Name);
+            }
+        }
+
+    }
+
+    ClearTask@[] tasksToClear;
+
+    void ClearTaskCoroutine()
+    {
+        while(true)
+        {
+            yield();
+            if (tasksToClear.Length == 0)
+            {
+                continue;
+            }
+
+            int toClear = tasksToClear.Length;
+            sleep(50);
+            for (int i = 0; i < toClear; i++)
+            {
+                tasksToClear[i].Release();
+            }
+            tasksToClear.RemoveRange(0, toClear);
         }
     }
 
