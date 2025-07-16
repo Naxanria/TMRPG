@@ -428,7 +428,7 @@ namespace PVM
         pvmMapList.RemoveRange(0, pvmMapList.Length);
 
         string url = "https://raw.githubusercontent.com/Naxanria/tm_stuff/refs/heads/main/pvm.json";
-        print("Fetching pvm info from '" + url + "'");
+        Logging::Info("Fetching pvm info from '" + url + "'");
         Net::HttpRequest@ req = Net::HttpRequest();
         req.Url = url;
 
@@ -441,14 +441,12 @@ namespace PVM
 
         if (req.ResponseCode() == 204)
         {
-            print("No data");
+            Logging::Warn("No data");
             return true;
         }
         if (req.ResponseCode() != 200)
         {
-            error("Request failed: " + req.ResponseCode());
-            error("Error: ");
-            error(req.Body);
+            Logging::Error("Loading maps failed\nRequest failed: " + req.ResponseCode() + "\nError: " + req.Body, true);            
 
             return false;
         }
@@ -468,7 +466,7 @@ namespace PVM
 
         Overview::initialized = false;
 
-        print("Found " + pvmJson.Length + " pvm maps");
+        Logging::Info("Found " + pvmJson.Length + " pvm maps");
 
         return true;
     }

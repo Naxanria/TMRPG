@@ -10,7 +10,7 @@ class CachedImage
 
     void DownloadAsync()
     {        
-        print("Loading texture " + url);
+        Logging::Debug("Loading texture " + url);
         auto req = API::GetHttp(url);
         while (!req.Finished())
         {
@@ -29,7 +29,7 @@ class CachedImage
                 }
                 else
                 {
-                    print("webp format found, falling back");
+                    Logging::Debug("webp format found, falling back");
                     auto req2 = API::GetHttp(fallback);
                     while (!req2.Finished())
                     {
@@ -42,14 +42,14 @@ class CachedImage
                         {
                             @texture = null;
                             error = true;
-                            print("Fallback failed");
+                            Logging::Debug("Fallback failed");
                         }
                     }
                     else
                     {
                         error = true;
                         unsupportedFormat = true;
-                        print("No image found");
+                        Logging::Debug("No image found");
                     }
                 }
             }
@@ -65,7 +65,7 @@ class CachedImage
                 }
                 else
                 {
-                    print("Loaded texture: " + url);
+                    Logging::Debug("Loaded texture: " + url);
                 }
             }
         }

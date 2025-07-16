@@ -89,7 +89,7 @@ void RenderMenu()
         {
             if (!PVM::fetching)
             {
-                print("Reloading pvm");
+                Logging::Info("Reloading pvm");
                 awaitingReload = true;
             }
         }
@@ -110,7 +110,7 @@ void DebugLoadPb()
 
 void PVMLOADERROR()
 {
-    UI::ShowNotification(Icons::Bullhorn, "Failed to load the pvm data. Please try again later", vec4(0.9, 0, 0, 1));
+    Logging::Error("Failed to load the pvm data. Please try again later", true);
 }
 
 void Render()

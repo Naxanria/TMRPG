@@ -9,7 +9,7 @@ namespace API
 
         if (resp.HasFailed || !resp.HasSucceeded) {
             UI::ShowNotification("Couldn't load map info :(");
-            warn('GetMapFromUid failed for ' + mapUid + ": " + resp.ErrorCode + ", " + resp.ErrorType + ", " + resp.ErrorDescription);
+            Logging::Warn('GetMapFromUid failed for ' + mapUid + ": " + resp.ErrorCode + ", " + resp.ErrorType + ", " + resp.ErrorDescription, true);
             return null;
         }
         return resp.Map;
@@ -38,7 +38,7 @@ namespace API
 
         if (task.HasFailed || !task.HasSucceeded)
         {
-            warn("Failed to get player record on map: " + mapUid + " Error: " + task.ErrorCode + ", " + task.ErrorType + ", " + task.ErrorDescription);
+            Logging::Warn("Failed to get player record on map: " + mapUid + " Error: " + task.ErrorCode + ", " + task.ErrorType + ", " + task.ErrorDescription, true);
         }
 
         if (task.MapRecordList.Length == 0)
@@ -124,7 +124,7 @@ namespace API
     {
         if (!Permissions::PlayLocalMap())
         {
-            UI::ShowNotification(Meta::ExecutingPlugin().Name + ": Error", "Refusing to load map because you lack necessary permissions. Club access required");
+            Logging::Error("Refusing to load map because you lack necessary permissions. Club access required", true);
             return;
         }
         auto map = GetMapFromUid(uid);

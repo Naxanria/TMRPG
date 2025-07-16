@@ -122,7 +122,7 @@ namespace PVM
 
         void Init()
         {
-            print("Initialization");
+            Logging::Debug("Initialization of pvm list window");
             if (initialized)
             {
                 return;
@@ -293,7 +293,7 @@ namespace PVM
             int max = 10;
 
             int i = 0;
-            print("Syncing pbs");
+            Logging::Debug("Syncing pvm pbs");
             while (i < PVM::pvmMapList.Length)
             {
                 for (int t = 0; t < updating.Length; t++)
@@ -345,17 +345,8 @@ namespace PVM
             vec2 mpos = UI::GetMousePos();
             if (!Utils::IsInside(mpos, rowSize) || shownTooltip)
             {
-                // UI::BeginTooltip();
-                // UI::Text("Mouse: " + mpos.x + "," + mpos.y);
-                // UI::Text("Bounds: " + rowSize.x + "," + rowSize.y + "," + rowSize.z + "," + rowSize.w);
-                // UI::EndTooltip();
                 return;
             }
-
-            // if (!UI::IsItemHovered())
-            // {
-            //     return;
-            // }
 
             UI::BeginTooltip();
             shownTooltip = true;
@@ -367,14 +358,7 @@ namespace PVM
                 CachedImage@ img = Images::GetFromTmxId(map.tmxId);
                 if (img.texture !is null)
                 {
-                    // vec2 imgS = img.texture.GetSize();
-                    // vec2 tS = vec2();
-                    // tS.x = (imgS.x > imgS.y) ? maxS : imgS.x / imgS.y * maxS;
-                    // tS.y = (imgS.y > imgS.x) ? maxS : imgS.y / imgS.x * maxS;
-
-                    UI::Image(img.texture, Utils::GetResized(img.texture.GetSize(), setting_pvm_list_thumbnail_size));
-                    // x = UI::GetCursorPos().x;
-                    // UI::SetCursorPosY(cpos.y);
+                    UI::Image(img.texture, Utils::GetResized(img.texture.GetSize(), setting_pvm_list_thumbnail_size));                 
                 }
                 else
                 { 
@@ -393,8 +377,6 @@ namespace PVM
                     }
                     string hourglass = Utils::GetHourGlass();
                     UI::Text(hourglass);
-                    // x = UI::GetCursorPos().x;
-                    // UI::SetCursorPosY(cpos.y);
                 }
             }
             for (int i = PVM::ALIEN_PLUS; i >= PVM::NOOB; i--)
