@@ -149,4 +149,23 @@ namespace API
             yield();
         }
     }
+
+    Net::HttpRequest@ GetHttp(const string &in url)
+    {
+        Net::HttpRequest@ ret = Net::HttpRequest();
+        ret.Url = url;
+        // ret.Method = Net::HttpMethod::Get;
+        ret.Start();
+        return ret;
+    }
+
+    Json::Value@ GetJson(const string &in url)
+    {
+        auto ret = GetHttp(url);
+        while(!ret.Finished())
+        {
+            yield();
+        }
+        return ret.Json();
+    }
 }

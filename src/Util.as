@@ -38,4 +38,29 @@ namespace Utils
         IO::SetClipboard(pbString);
         UI::ShowNotification(Icons::Clipboard + " Personal best time copied to clipboard " + pbString);
     }
+
+    string GetHourGlass()
+    {
+        int t = Time::Stamp % 3;
+        return t == 0 ? Icons::HourglassStart : (t == 1) ? Icons::HourglassHalf : Icons::HourglassEnd;
+    }
+
+    vec2 GetResized(vec2 size, float max, bool keepAspect = true)
+    {
+        if (!keepAspect)
+        {
+            return vec2(Math::Min(size.x, max), Math::Min(size.y, max));
+        }
+
+        float x = (size.x > size.y) ? max : size.x / size.y * max;
+        float y = (size.y > size.x) ? max : size.y / size.x * max;
+
+        return vec2(x, y);
+    }
+
+    bool IsInside(vec2 pos, vec4 bounds)
+    {
+        return bounds.x <= pos.x && bounds.z >= pos.x 
+            && bounds.y <= pos.y && bounds.w >= pos.y;
+    }
 }

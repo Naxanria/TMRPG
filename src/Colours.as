@@ -14,4 +14,7 @@ namespace Colours
 
     const string FORMAT_AUTHOR_COLOUR = "\\$AAA";
     const string FORMAT_GRADE_COLOUR = "\\$36B";
+
+    const vec4 COL_WHITE = vec4(1.0, 1.0, 1.0, 1.0);
+    const vec4 GRADE_COLOUR_E = vec4(0.0, 0.2, 0.8, 1.0);
 }

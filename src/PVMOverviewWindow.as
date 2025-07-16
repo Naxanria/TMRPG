@@ -2,6 +2,15 @@ namespace PVM
 {
     namespace Overview
     {
+        [Setting name="Show Tooltip" category="PVM LIST"]
+        bool setting_pvm_list_show_tooltip = true;
+        [Setting name="Show Thumbnail in tooltip" category="PVM LIST" if="setting_pvm_list_show_tooltip"]
+        bool setting_pvm_list_show_thumbnail = true;
+        //[Setting name="Use Tmx Thumbnail" category="PVM LIST" if="setting_pvm_list_show_thumbnail" hidden]
+        bool setting_pvm_list_use_tmx = true;
+        [Setting name="Thumbnail Size" category="PVM LIST" min="128" max="512" if="setting_pvm_list_show_thumbnail"]
+        int setting_pvm_list_thumbnail_size = 256;
+
         Medal noPbMedal = Medal(-1, "no pb", "\\$888", Icons::Kenney::Radio);
 
         namespace Stats
@@ -164,7 +173,7 @@ namespace PVM
                 UI::BeginChild("pvm maps");
                 UI::BeginGroup();
                 // name, author, current medal, Play, TMX
-                if (UI::BeginTable("pvm overview", 6, UI::TableFlags::SizingFixedFit))
+                if (UI::BeginTable("pvm overview", 6, UI::TableFlags::SizingFixedFit | UI::TableFlags::RowBg))
                 {
                     UI::TableSetupColumn("name", UI::TableColumnFlags::WidthFixed, nameWidth);
                     UI::TableSetupColumn("author", UI::TableColumnFlags::WidthStretch);
@@ -173,6 +182,7 @@ namespace PVM
                     //UI::TableSetupColumn("time", UI::TableColumnFlags::WidthFixed, timeWidth);
                     UI::TableSetupColumn("playBtn");
                     UI::TableSetupColumn("tmxBtn");
+                    shownTooltip = false;
 
                     UI::ListClipper clip(PVM::pvmMapList.Length);
                     while (clip.Step())
@@ -205,22 +215,29 @@ namespace PVM
             UI::TableNextRow();
 
             UI::TableNextColumn();
+            
+            vec2 startPos = UI::GetCursorScreenPos();
             UI::Text(mapData.name);
+            // PVMTooltip(mapData);
 
             UI::TableNextColumn();
             UI::Text("\\$777by\\$z " + mapData.author);
+            // PVMTooltip(mapData);
 
             UI::TableNextColumn();
             UI::Text(mapData.pvm_grade);
+            // PVMTooltip(mapData);
 
             UI::TableNextColumn();            
             string timeText = mapData.pb == -1 ? "\\$666no pb\\$z" : PVM::ReadableTime(mapData.pb);
             UI::Text(GetMedalToShow(mapData) + " \\$z" + timeText);
+            // PVMTooltip(mapData);
             if (UI::IsItemClicked())
             {
                 Utils::TimeToClipboard(mapData.pb);
             }
-            AddTimeTooltip(mapData);
+            // AddTimeTooltip(mapData);
+            // PVMTooltip(mapData);
 
             UI::TableNextColumn();
             if (UI::Button("Play"))
@@ -238,32 +255,12 @@ namespace PVM
             {
                 OpenBrowserURL("https://trackmania.exchange/mapshow/" + mapData.tmxId);
             }
+            vec2 endPos = UI::GetCursorScreenPos();
+            endPos.x = endPos.x + UI::GetItemRect().z;
             UI::PopID();
-        }
-
-        void AddTimeTooltip(MapData& map)
-        {
-            if (!UI::IsItemHovered())
-            {
-                return;
-            }
-
-            UI::BeginTooltip();
             
-            for (int i = PVM::ALIEN_PLUS; i >= PVM::NOOB; i--)
-            {
-                uint time = map.GetMedalTime(i);
-                if (time == 0)
-                {
-                    continue;
-                }
-
-                UI::Text(medals[i].GetIcon());
-                UI::SameLine();
-
-                UI::Text(PVM::ReadableTime(time));
-            }
-            UI::EndTooltip();
+            PVMTooltip(mapData, vec4(startPos, endPos));
+            
         }
 
         string GetMedalToShow(MapData map)
@@ -335,6 +332,85 @@ namespace PVM
                 }
             }
             return -1;
+        }
+
+        bool shownTooltip = false;
+        void PVMTooltip(MapData& map, vec4 rowSize)
+        {
+            if (!setting_pvm_list_show_tooltip)
+            {
+                return;
+            }
+
+            vec2 mpos = UI::GetMousePos();
+            if (!Utils::IsInside(mpos, rowSize) || shownTooltip)
+            {
+                // UI::BeginTooltip();
+                // UI::Text("Mouse: " + mpos.x + "," + mpos.y);
+                // UI::Text("Bounds: " + rowSize.x + "," + rowSize.y + "," + rowSize.z + "," + rowSize.w);
+                // UI::EndTooltip();
+                return;
+            }
+
+            // if (!UI::IsItemHovered())
+            // {
+            //     return;
+            // }
+
+            UI::BeginTooltip();
+            shownTooltip = true;
+
+            vec2 cpos = UI::GetCursorPos();
+            float x = cpos.x;
+            if (setting_pvm_list_show_thumbnail)
+            {
+                CachedImage@ img = Images::GetFromTmxId(map.tmxId);
+                if (img.texture !is null)
+                {
+                    // vec2 imgS = img.texture.GetSize();
+                    // vec2 tS = vec2();
+                    // tS.x = (imgS.x > imgS.y) ? maxS : imgS.x / imgS.y * maxS;
+                    // tS.y = (imgS.y > imgS.x) ? maxS : imgS.y / imgS.x * maxS;
+
+                    UI::Image(img.texture, Utils::GetResized(img.texture.GetSize(), setting_pvm_list_thumbnail_size));
+                    // x = UI::GetCursorPos().x;
+                    // UI::SetCursorPosY(cpos.y);
+                }
+                else
+                { 
+                    if (img.error)
+                    {
+                        if (img.unsupportedFormat)
+                        {
+                            UI::Text("\\$f00??");
+                            UI::SameLine();
+                        }
+                        else if (img.notFound)
+                        {
+                            UI::Text("\\$f00404");
+                            UI::SameLine();
+                        }
+                    }
+                    string hourglass = Utils::GetHourGlass();
+                    UI::Text(hourglass);
+                    // x = UI::GetCursorPos().x;
+                    // UI::SetCursorPosY(cpos.y);
+                }
+            }
+            for (int i = PVM::ALIEN_PLUS; i >= PVM::NOOB; i--)
+            {
+                uint time = map.GetMedalTime(i);
+                if (time == 0)
+                {
+                    continue;
+                }
+                UI::SetCursorPosX(x);
+                UI::Text(medals[i].GetIcon());
+                UI::SameLine();
+
+                UI::Text(PVM::ReadableTime(time));
+            }
+            UI::EndTooltip();
         }
     }
 }
