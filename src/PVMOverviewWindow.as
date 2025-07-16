@@ -11,7 +11,7 @@ namespace PVM
         [Setting name="Thumbnail Size" category="PVM LIST" min="128" max="512" if="setting_pvm_list_show_thumbnail"]
         int setting_pvm_list_thumbnail_size = 256;
 
-        Medal noPbMedal = Medal(-1, "no pb", "\\$888", Icons::Kenney::Radio);
+        Medal noPbMedal = Medal(-1, "Unfinished", "\\$888", Icons::Kenney::Radio);
 
         namespace Stats
         {
@@ -112,7 +112,13 @@ namespace PVM
                 }
 
                 UI::SameLine();
-                UI::Text(medal.GetIcon() + "\\$z (" + amount + "/" + totalMaps + ")");                
+                UI::Text(medal.GetIcon() + "\\$z (" + amount + "/" + totalMaps + ")");    
+                if (UI::IsItemHovered())            
+                {
+                    UI::BeginTooltip();
+                    UI::Text(medal.label);
+                    UI::EndTooltip();
+                }
             }
         }
 

@@ -73,7 +73,7 @@ namespace PVM
 
     array<Medal> medals = 
     {
-        Medal(NO_MEDAL, "", Colours::MEDAL_UNKNOWN, Icons::Circle),
+        Medal(NO_MEDAL, "Finished", Colours::MEDAL_UNKNOWN, Icons::Circle),
         Medal(NOOB, "Noob", Colours::MEDAL_NOOB, Icons::Circle),
         Medal(INTERMEDIATE, "Intermediate", Colours::MEDAL_INTERMEDIATE, Icons::Circle),
         Medal(Challenger, "Challenger", Colours::MEDAL_CHALLENGER, Icons::Circle),
